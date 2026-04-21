@@ -21,6 +21,32 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const DATABASE_URL = process.env.DATABASE_URL;
 const REDIS_URL = process.env.REDIS_URL || process.env.SPRING_REDIS_URL;
 
+/**
+ * Managed DB URLs often include ?sslmode=require. Newer pg-connection-string treats that
+ * like verify-full, which conflicts with relaxed TLS for non-prod (self-signed chain).
+ * Drop URL SSL params so Pool `ssl` is the only TLS config.
+ */
+function pgConnectionString(rawUrl) {
+  if (!rawUrl) return rawUrl;
+  try {
+    const u = new URL(rawUrl);
+    for (const key of [
+      'sslmode',
+      'ssl',
+      'sslcert',
+      'sslkey',
+      'sslrootcert',
+      'sslcrl',
+      'uselibpqcompat',
+    ]) {
+      u.searchParams.delete(key);
+    }
+    return u.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
 function pgSslConfig() {
   if (!DATABASE_URL) return false;
   if (process.env.PGSSLMODE === 'disable') return false;
@@ -37,7 +63,7 @@ function pgSslConfig() {
 
 const pool = DATABASE_URL
   ? new Pool({
-      connectionString: DATABASE_URL,
+      connectionString: pgConnectionString(DATABASE_URL),
       ssl: pgSslConfig(),
       max: 2,
     })
