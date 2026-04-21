@@ -1,0 +1,30 @@
+{
+  "name": "nodejsnotepad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "directories": {
+    "lib": "src/lib"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "connect-redis": "^9.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "pg": "^8.20.0",
+    "redis": "^5.12.1",
+    "sockjs": "^0.3.24",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
