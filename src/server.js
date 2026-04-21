@@ -30,10 +30,9 @@ function pgSslConfig() {
   } catch {
     // ignore
   }
-  if (process.env.PGSSLMODE === 'require' || NODE_ENV === 'production') {
-    return { rejectUnauthorized: false };
-  }
-  return false;
+  // Remote managed Postgres (e.g. DigitalOcean) expects TLS. Provider CAs are often
+  // not in Node's default trust store unless you set ssl.ca; this matches common DO setups.
+  return { rejectUnauthorized: false };
 }
 
 const pool = DATABASE_URL
